@@ -1,23 +1,12 @@
 SKELLINGTON
 
-Server
-	Spades Game Instance
-	SpadesWeb Spades-interface
-	WebInterface Web-interface
-	Flask app code
-	Jinja2 Template 
-Client
-	Flask provided shared objects
-	Client side browser scripts
-
-Server <-> [POST/GET] <-> Client
 
 Flask app code currently imports from and calls to
 the SpadesWeb Spades-interface. This is bad, this is wrong.
-Badong. 
+Badong. Not wrad.
 
 Spades <-> SpadesWeb <-> WebInterface <-> Flask
-				\__________________________/
+		\__________________________/
 Above: wrong, bad, no
 
 Spades <-> SpadesWeb <-> WebInterface <-> Flask
