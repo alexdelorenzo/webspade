@@ -12,7 +12,7 @@ about
 - views in jinja2
 
 this is another 'learn as i go' project. like most things, i'll look back in a month and lol at the choices i've made, and then fix them.
-that's my workflow. it's shame based, thus a source of infinite motivation.
+that's my workflow, fueled by shame.
 
 license
 =======
