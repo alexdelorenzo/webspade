@@ -2,7 +2,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 from contextlib import closing
 from wrapper import SpadesWeb
 
-"""literally just following the flask tutorial here just to see i can do with it"""
+#literally just following the flask tutorial here just to see i can do with it
 
 DEBUG = True
 SECRET_KEY = 'herf'

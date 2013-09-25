@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from Core.Game import Game
-from SpadesRules import *
+from SpadesRules import SpadesRules
 from PlayerActions import PlayerActions
 import os, operator
 
@@ -8,8 +8,22 @@ import os, operator
 class Ledger(object):
 	def __init__(self, players):
 		self.players = {who: {'bid': 0, 'wins': 0, 'score': 0} for who in players}
-
 		self.game = {'hand': -1, 'round': -1, 'trick_taker': -1}
+
+	@property
+	def hand(self): return self.game['hand']
+	@property
+	def round(self): return self.game['round']
+	@property
+	def trick_taker(self): return self.game['trick_taker']
+
+	@hand.setter
+	def hand(self, val): self.game['hand'] = val
+	@round.setter
+	def round(self, val): self.game['round'] = val
+	@trick_taker.setter
+	def trick_taker(self, val): self.game['trick_taker'] = val
+
 
 
 class Spades(Game):
@@ -63,11 +77,6 @@ class Spades(Game):
 	def generate_ledger(self):
 		self.ledger = Ledger(range(len(self.players)))
 
-	def _game_stats(self, key, value):
-		self.ledger.game[key] = value
-
-	def _update_trick_taker(self, player):
-		self._game_stats('trick_taker', player)
 
 	def _hand_counter(self):
 		self.ledger.game['hand'] += 1
@@ -111,7 +120,7 @@ class Spades(Game):
 
 	def _take_trick(self):
 		trickTaker = self.rules.whoTakesTrick(self.table.groups[0])
-		self._update_trick_taker(trickTaker)
+		self.ledger.trick_taker = trickTaker
 		print("Trick Taker: Player " + trickTaker)
 		self.ledger.players[trickTaker]['wins'] += 1
 		hand = self.table.removeGroup(0)
@@ -157,7 +166,7 @@ class Spades(Game):
 
 
 	def next_hand(self):
-		self._game_stats('hand', self.ledger.game['hand'] + 1)
+		self.ledger.hand += 1
 		print("Hand ", self.ledger.game['hand'])
 
 		for player in self.players:
@@ -176,7 +185,7 @@ class Spades(Game):
 			self._hand_counter()
 
 		self._take_trick()
-		self._game_stats('hand', -1)
+		self.ledger.hand = -1
 		self.table.newGroup()
 
 	@property

@@ -10,24 +10,24 @@ class Game(object):
     def __init__(self):
         return
 
-    def generateDeck(self):
+    def generate_deck(self):
         self.deck = Deck()
 
-    def initiatePlayers(self, intHumans=2, intAI=0):
+    def initiate_players(self, intHumans=2, intAI=0):
         self.players = [Player(str(x)) for x in range(intHumans)]
 
-    def initiateDealer(self):
+    def initiate_dealer(self):
         self.dealer = Dealer()
         self.dealer.shuffle(self.deck)
 
-    def initiateTable(self):
+    def initiate_table(self):
         self.table = Table2()
 
-    def addPlayer(self, player):
+    def add_player(self, player):
         '''Accepts the player object'''
         self.players.append(player)
 
-    def dealCards(self, numberOfCards=0):
+    def deal_cards(self, numberOfCards=0):
         for x in range(len(self.players)):
             self.dealer.deal(self.deck, self.players[x], numberOfCards)
     def debug(self):
@@ -70,10 +70,10 @@ class Game(object):
 
 def main():
     g = Game()
-    g.generateDeck()
-    g.initiateDealer()
-    g.initiatePlayers(2)
-    g.addPlayer(g.dealer)
+    g.generate_deck()
+    g.initiate_dealer()
+    g.initiate_players(2)
+    g.add_player(g.dealer)
 
 
 if __name__ == '__main__':
