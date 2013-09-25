@@ -8,18 +8,20 @@ class Table2(list):
         super(Table2, self).__init__()
         self.groups = [Hand()]
 
-    def newGroup(self):
+    def new_group(self):
         self.groups.append(Hand())
 
-    def removeGroup(self, gIndex):
-        return self.groups.pop(gIndex)
+    def remove_group(self, g_index):
+        return self.groups.pop(g_index)
 
-    def returnCardByIndex(self, gIndex, cIndex):
+    def return_card_by_index(self, gIndex, cIndex):
         return self.groups[gIndex].fromHand(self.groups[gIndex][cIndex])
 
-    def addCardToGroup(self, cardObj, gIndex):
-        self.groups[gIndex].toHand(cardObj)
+    def add_card_to_group(self, card_obj, g_index):
+        self.groups[g_index].toHand(card_obj)
 
-    def joinGroups(self, gIndex1, gIndex2):
-        for x in range(0, len(self.groups[gIndex2])):
-            self.addCardToGroup(self.returnCardByIndex(x, gIndex2), gIndex1)
+    def join_groups(self, g_index1, g_index2):
+        for x in range(0, len(self.groups[g_index2])):
+            self.add_card_to_group(
+	            self.return_card_by_index(x, g_index2),
+	            g_index1)

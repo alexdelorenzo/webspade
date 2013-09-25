@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*-
 from Core.Game import Game
-from SpadesRules import SpadesRules
+from SpadesRules import SpadesRules, SpadesDealer
 from PlayerActions import PlayerActions
-import os, operator
+import os
 
 
 class Ledger(object):
 	def __init__(self, players):
 		self.players = {who: {'bid': 0, 'wins': 0, 'score': 0} for who in players}
 		self.game = {'hand': -1, 'round': -1, 'trick_taker': -1}
+
+	##
+	## Properties can be get/set irrespective to the data structure
+	##  overkill for now, but this class will be extracted and
+	##  generalized later
+	##
 
 	@property
 	def hand(self): return self.game['hand']
@@ -31,12 +37,12 @@ class Spades(Game):
 		super(Spades, self).__init__()
 		self.name = 'Spades'
 		self.rules = SpadesRules()
-		self.generateDeck()
+		self.generate_deck()
 		self.initiate_players(players)
 		self.initiate_dealer()
-		self.addPlayer(self.dealer)
-		self.dealCards(cards)
-		self.initiateTable()
+		self.add_player(self.dealer)
+		self.deal_cards(cards)
+		self.initiate_table()
 		self._assign_card_owners()
 
 	@property
@@ -67,19 +73,37 @@ class Spades(Game):
 
 		return highBidder
 
-	def initiate_players(self, intHumans):
-		self.players = [PlayerActions(x) for x in range(0, intHumans)]
+	@property
+	def next_player(self, override=False):
+		'''Returns player index as integer'''
 
-	def initiate_dealer(self):
-		self.dealer = SpadesDealer()
-		self.dealer.shuffle(self.deck)
+		blnFirstTurnOfRound = (self.ledger.game['hand'] is 0 and self.ledger.game['trick_taker'] is -1)
+		blnTurnAfterCardPlayed = (self.ledger.game['hand'] >= 0)
+		blnTurnAfterTakeTrick = (self.ledger.game['hand'] is 0 and self.ledger.game['trick_taker'] is not -1)
+		blnLastCardPlayed = (self.ledger.game['hand'] is len(self.players))
 
-	def generate_ledger(self):
-		self.ledger = Ledger(range(len(self.players)))
-
-
-	def _hand_counter(self):
-		self.ledger.game['hand'] += 1
+		if override is True:
+			return override
+		elif blnFirstTurnOfRound is True:
+			#print "DEBUG blnFirstTurnOfRound is True"
+			#print "DEBUG self.highestBidder() is ", self.highestBidder()
+			return self._highest_bidder
+		elif blnTurnAfterTakeTrick is True:
+			#print "DEBUG blnTurnAfterTakeTrick is True"
+			return self.ledger.game['trick_taker']
+		elif blnTurnAfterCardPlayed is True:
+			#print "DEBUG blnTurnAfterCardPlayed is True"
+			ownerOfLastCard = self.table.groups[0][-1].owner
+			#print "DEBUG len(self.players) ", len(self.players)
+			if ownerOfLastCard + 1 is len(self.players):
+				return 0
+			else:
+				return ownerOfLastCard + 1
+		elif blnLastCardPlayed is True:
+			#print "DEBUG blnLastCardPlayed is True"
+			return self.ledger.game['trick_taker']
+		else:
+			raise Exception("Invalid turn")
 
 	def _wins_to_score(self, win_set, diff_set):
 		for who, plyr_dict in self.ledger.players.iteritems():
@@ -92,8 +116,8 @@ class Spades(Game):
 
 	def _print_scores(self):
 		for who, plyrObj in enumerate(self.players):
-			print("Player " + who + "'s score: " + self.ledger.players[who]['score'])
-			print("Player " + who + "'s tricks: " + self.ledger.players[who]['wins'])
+			print("Player ",  who,  "'s score: ", self.ledger.players[who]['score'])
+			print("Player ",  who,  "'s tricks: ", self.ledger.players[who]['wins'])
 
 	def _assign_card_owners(self):
 		for who, plyrObj in enumerate(self.players):
@@ -103,30 +127,42 @@ class Spades(Game):
 	def _append_bids(self, player, bid):
 		self.ledger.players[player]['bid'] = bid
 
-	def initiate_bidding(self):
-		for who, plyr_obj in enumerate(self.players):
-			plyr_obj.bid(int(input('Player ' + str(who) + "'s bid: ")))
-		self._write_bids_to_ledger()
-
 	def _write_bids_to_ledger(self):
 		for who, plyrObj in enumerate(self.players):
 			self._append_bids(who, plyrObj.bids.pop())
 
+	def _hand_counter(self):
+		self.ledger.game['hand'] += 1
 
 	def _play_card(self, player):
-		self.table.addCardToGroup(
+		self.table.add_card_to_group(
 			self.players[player].play(
 				self.players[player].selectCard()), 0)
 
 	def _take_trick(self):
 		trickTaker = self.rules.whoTakesTrick(self.table.groups[0])
 		self.ledger.trick_taker = trickTaker
-		print("Trick Taker: Player " + trickTaker)
+		print("Trick Taker: Player ", trickTaker)
 		self.ledger.players[trickTaker]['wins'] += 1
-		hand = self.table.removeGroup(0)
+		hand = self.table.remove_group(0)
 
 		for card in range(len(hand)):
 			self.deck.returnToStack(hand.pop())
+
+	def initiate_players(self, intHumans):
+		self.players = [PlayerActions(x) for x in range(0, intHumans)]
+
+	def initiate_dealer(self):
+		self.dealer = SpadesDealer()
+		self.dealer.shuffle(self.deck)
+
+	def generate_ledger(self):
+		self.ledger = Ledger(range(len(self.players)))
+
+	def initiate_bidding(self):
+		for who, plyr_obj in enumerate(self.players):
+			plyr_obj.bid(int(input('Player ' + str(who) + "'s bid: ")))
+		self._write_bids_to_ledger()
 
 	def new_game(self):
 		self.generate_ledger()
@@ -188,34 +224,3 @@ class Spades(Game):
 		self.ledger.hand = -1
 		self.table.newGroup()
 
-	@property
-	def next_player(self, override=False):
-		'''Returns player index as integer'''
-
-		blnFirstTurnOfRound = (self.ledger.game['hand'] is 0 and self.ledger.game['trick_taker'] is -1)
-		blnTurnAfterCardPlayed = (self.ledger.game['hand'] >= 0)
-		blnTurnAfterTakeTrick = (self.ledger.game['hand'] is 0 and self.ledger.game['trick_taker'] is not -1)
-		blnLastCardPlayed = (self.ledger.game['hand'] is len(self.players))
-
-		if override is True:
-			return override
-		elif blnFirstTurnOfRound is True:
-			#print "DEBUG blnFirstTurnOfRound is True"
-			#print "DEBUG self.highestBidder() is ", self.highestBidder()
-			return self._highest_bidder
-		elif blnTurnAfterTakeTrick is True:
-			#print "DEBUG blnTurnAfterTakeTrick is True"
-			return self.ledger.game['trick_taker']
-		elif blnTurnAfterCardPlayed is True:
-			#print "DEBUG blnTurnAfterCardPlayed is True"
-			ownerOfLastCard = self.table.groups[0][-1].owner
-			#print "DEBUG len(self.players) ", len(self.players)
-			if ownerOfLastCard + 1 is len(self.players):
-				return 0
-			else:
-				return ownerOfLastCard + 1
-		elif blnLastCardPlayed is True:
-			#print "DEBUG blnLastCardPlayed is True"
-			return self.ledger.game['trick_taker']
-		else:
-			raise Exception("Invalid turn")
