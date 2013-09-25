@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+<div id='hand'>
+<center>
+<div id='card'>
+{% for card in hand %}
+<form action-"{{ url_for('play_card') }}" method=post>
+[{{ card.value }} of {{ card.suit }}]
+<input type=submit name=card_index value={{ loop.index }}></input>
+{% endfor %}
+</div>
+</center>
+</div>
+
+{% endblock %}
+   

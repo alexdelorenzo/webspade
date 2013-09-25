@@ -1,0 +1,38 @@
+SKELLINGTON
+
+Server
+	Spades Game Instance
+	SpadesWeb Spades-interface
+	WebInterface Web-interface
+	Flask app code
+	Jinja2 Template 
+Client
+	Flask provided shared objects
+	Client side browser scripts
+
+Server <-> [POST/GET] <-> Client
+
+Flask app code currently imports from and calls to
+the SpadesWeb Spades-interface. This is bad, this is wrong.
+Badong. 
+
+Spades <-> SpadesWeb <-> WebInterface <-> Flask
+				\__________________________/
+Above: wrong, bad, no
+
+Spades <-> SpadesWeb <-> WebInterface <-> Flask
+Avove: correct, good, yes
+
+Rationale:
+
+	Spades -> Spades Game Instance
+		Prior project that 'works', built on top of a card modelling module I wrote to combat ennui. It is a barebones console game.
+	SpadesWeb -> Spades-interface
+		Since we're keeping most methods and event flow from the original cosole game, we Let It Be by inheriting then only overloading the methods reliant on raw_input() to accept and pass input to the appropriate methods.
+		This should simply be a remapping of console dependant functions to act as a clean wrapper.
+	WebInterface -> Web-interface
+		Passes web form data and events to SpadesWeb. 
+		Should implement an event-queue and processing logic.
+	Flask app -> App framework
+		This should just handle views and all that nonsense.
+		Currently some game logic has leaked into this code.

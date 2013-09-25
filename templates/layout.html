@@ -1,0 +1,11 @@
+<!doctype html>
+<title>webspade</title>
+<div class=page>
+	<div class=metanav>
+	<h1>webspade</h1>
+	</div>
+	{% for message in get_flashed_messages() %}
+		<div class=flash>{{ message }}</div>
+	{% endfor %}
+	{% block body %}{% endblock %}
+</div>
