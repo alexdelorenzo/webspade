@@ -57,51 +57,54 @@ class Spades(Game):
 
 	@property
 	def _reached_500_yet(self):
-		for who, plyrObj in enumerate(self.players):
+		for who, plyr_obj in enumerate(self.players):
 			if self.ledger.players[who]['score'] >= 500:
 				return True
 		return False
 
 	@property
 	def _highest_bidder(self):
-		highBidder, highBid = 0, 0
+		high_bidder, high_bid = 0, 0
 
 		for who in range(len(self.players)):
 			bid = self.ledger.players[who]['bid']
-			highBid = bid if bid > highBid else highBid
-			highBidder = who if bid is highBid else highBidder
+			high_bid = bid if bid > high_bid else high_bid
+			high_bidder = who if bid is high_bid else high_bidder
 
-		return highBidder
+		return high_bidder
 
 	@property
 	def next_player(self, override=False):
 		'''Returns player index as integer'''
 
-		blnFirstTurnOfRound = (self.ledger.game['hand'] is 0 and self.ledger.game['trick_taker'] is -1)
-		blnTurnAfterCardPlayed = (self.ledger.game['hand'] >= 0)
-		blnTurnAfterTakeTrick = (self.ledger.game['hand'] is 0 and self.ledger.game['trick_taker'] is not -1)
-		blnLastCardPlayed = (self.ledger.game['hand'] is len(self.players))
+		first_hand = self.ledger.hand == 0
+		no_trick_taker = self.ledger.trick_taker == -1
+
+		first_turn_of_round = first_hand and no_trick_taker
+		turn_after_card_played = self.ledger.hand >= 0
+		turn_after_trick_taken = first_hand and not no_trick_taker
+		last_card_played = self.ledger.hand == len(self.players)
 
 		if override is True:
 			return override
-		elif blnFirstTurnOfRound is True:
-			#print "DEBUG blnFirstTurnOfRound is True"
+		elif first_turn_of_round is True:
+			#print "DEBUG first_turn_of_round is True"
 			#print "DEBUG self.highestBidder() is ", self.highestBidder()
 			return self._highest_bidder
-		elif blnTurnAfterTakeTrick is True:
-			#print "DEBUG blnTurnAfterTakeTrick is True"
-			return self.ledger.game['trick_taker']
-		elif blnTurnAfterCardPlayed is True:
-			#print "DEBUG blnTurnAfterCardPlayed is True"
-			ownerOfLastCard = self.table.groups[0][-1].owner
+		elif turn_after_trick_taken is True:
+			#print "DEBUG turn_after_trick_taken is True"
+			return self.ledger.trick_taker
+		elif turn_after_card_played is True:
+			#print "DEBUG turn_after_card_played is True"
+			owner_of_last_card = self.table.groups[0][-1].owner
 			#print "DEBUG len(self.players) ", len(self.players)
-			if ownerOfLastCard + 1 is len(self.players):
+			if owner_of_last_card + 1 is len(self.players):
 				return 0
 			else:
-				return ownerOfLastCard + 1
-		elif blnLastCardPlayed is True:
-			#print "DEBUG blnLastCardPlayed is True"
-			return self.ledger.game['trick_taker']
+				return owner_of_last_card + 1
+		elif last_card_played is True:
+			#print "DEBUG last_card_played is True"
+			return self.ledger.trick_taker
 		else:
 			raise Exception("Invalid turn")
 
