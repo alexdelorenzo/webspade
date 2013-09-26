@@ -17,11 +17,11 @@ Rationale:
 	Spades -> Spades Game Instance
 		Prior project that 'works', built on top of a card modelling module I wrote to combat ennui. It is a barebones console game.
 	SpadesWeb -> Spades-interface
-		Since we're keeping most methods and event flow from the original cosole game, we Let It Be by inheriting then only overloading the methods reliant on raw_input() to accept and pass input to the appropriate methods.
+		Since we're keeping most methods and event flow from the original cosole game, we Let It Be by inheriting then only overriding the methods reliant on raw_input() to accept and pass input to the appropriate methods.
 		This should simply be a remapping of console dependant functions to act as a clean wrapper.
 	WebInterface -> Web-interface
 		Passes web form data and events to SpadesWeb. 
-		Should implement an event-queue and processing logic.
+		Should implement an event-queue and processing logic. -> this is a retarded idea, i can just smooth out the pytrick code to not be dependant on input
 	Flask app -> App framework
 		This should just handle views and all that nonsense.
 		Currently some game logic has leaked into this code.
