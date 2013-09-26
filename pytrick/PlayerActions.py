@@ -12,16 +12,16 @@ class PlayerActions(Player):
     def bid(self, tricks):
         self.bids.append(tricks)
 
-    def selectCard(self):
+    def select_card(self):
         return int(input('Choose card index: '))
 
     def play(self, card):
-        return self.giveCard(card)
+        return self.give_card(card)
 
     def lead(self, card):
-        return self.giveCard(card)
+        return self.give_card(card)
 
-    def lookAtHand(self, hand=None):
+    def look_at_hand(self, hand=None):
         if hand is None:
             hand = self.hand
 

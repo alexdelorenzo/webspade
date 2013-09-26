@@ -15,10 +15,10 @@ class Table2(list):
         return self.groups.pop(g_index)
 
     def return_card_by_index(self, gIndex, cIndex):
-        return self.groups[gIndex].fromHand(self.groups[gIndex][cIndex])
+        return self.groups[gIndex].from_hand(self.groups[gIndex][cIndex])
 
     def add_card_to_group(self, card_obj, g_index):
-        self.groups[g_index].toHand(card_obj)
+        self.groups[g_index].to_hand(card_obj)
 
     def join_groups(self, g_index1, g_index2):
         for x in range(0, len(self.groups[g_index2])):

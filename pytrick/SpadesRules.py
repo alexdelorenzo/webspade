@@ -5,80 +5,83 @@ from Core.Hand import Hand
 from PlayerActions import PlayerActions
 import copy
 
+
 class SpadesDealer(Dealer, PlayerActions):
 
     def __init__(self):
         super(SpadesDealer, self).__init__()
 
+
 class SpadesRules(TrickGames):
 
     def __init__(self):
         super(SpadesRules, self).__init__()
-        self.replaceTrump('Spades')
+        self.replace_trump('Spades')
 
-    def returnSuit(self, handObj):
-        if len(handObj) is not 0:
-            return handObj[-1].suit
+    @staticmethod
+    def return_suit(hand_obj):
+        if len(hand_obj) is not 0:
+            return hand_obj[-1].suit
         else:
             return None
 
-    def followsSuit(self, handObj, cardObj):
-        if self.returnSuit(handObj) == cardObj.suit:
+    def follows_suit(self, hand_obj, card_obj):
+        if self.return_suit(hand_obj) == card_obj.suit:
             return True
-        elif self.returnSuit(handObj) is None:
+        elif self.return_suit(hand_obj) is None:
             return True
         else:
             return False
 
-    def highestCardInHand(self, handObj):
-        unsortedHand = copy.deepcopy(handObj)
-        for card in unsortedHand:
-            card.append(unsortedHand.index(card))
+    def highest_card_in_hand(self, hand_obj):
+        unsorted_hand = copy.deepcopy(hand_obj)
+        for card in unsorted_hand:
+            card.append(unsorted_hand.index(card))
 
-        sortedHand = sorted(unsortedHand, key=lambda x: x[0], reverse=True)
-        return [sortedHand[card][2] for card in range(len(sortedHand))][0:4]
+        sorted_hand = sorted(unsorted_hand, key=lambda x: x[0], reverse=True)
+        return [sorted_hand[card][2] for card in range(len(sorted_hand))][0:4]
 
-    def searchTrump(self, handObj, returnCardObj=False):
-        if self.isTrumpInHand(handObj) is True:
+    def search_trump(self, hand_obj, return_card_obj=False):
+        if self.is_trump_in_hand(hand_obj) is True:
             trumps = []
-            for x in range(0, len(handObj)):
+            for x in range(0, len(hand_obj)):
                 for y in range(0, len(self.trump)):
-                    if handObj[x].suit is self.trump[y]:
+                    if hand_obj[x].suit is self.trump[y]:
                             trumps.append(x)
 
-            return [handObj[index] for index in trumps]
+            return [hand_obj[index] for index in trumps]
         else:
             return False
 
-    def highestTrumpInHand(self, handObj):
-        handCopy = copy.deepcopy(handObj)
-        if self.searchTrump(handCopy) is not False:
-            highIndex, lastTrump, trumps = 0, 0, []
-            for trump in self.searchTrump(handCopy):
+    def highest_trump_in_hand(self, hand_obj):
+        hand_copy = copy.deepcopy(hand_obj)
+        if self.search_trump(hand_copy) is not False:
+            high_index, last_trump, trumps = 0, 0, []
+            for trump in self.search_trump(hand_copy):
                  trumps.append(trump)
-            return self.highestCardInHand(self.searchTrump(handObj))
+            return self.highest_card_in_hand(self.search_trump(hand_obj))
         else:
             return False
 
         #for x in range(0, len(self.trump))
-    def isCardPlayable(self, tHandObj, cardObj):
+    def is_card_playable(self, table_hand_obj, card_obj):
         for x in range(0, len(self.trump)):
-            if cardObj.suit is self.trump[x]:
+            if card_obj.suit is self.trump[x]:
                 return True
                 break
-            elif self.followsSuit(tHandObj, cardObj) is True:
+            elif self.follows_suit(table_hand_obj, card_obj) is True:
                 return True
                 break
             elif x is len(self.trump) - 1:
                 return False
                 break
 
-    def playableCardsInHand(self, tHandObj, handObj):
+    def playable_cards_in_hand(self, tbl_hand_obj, hand_obj):
         cards = Hand()
-        for cardIndex in range(0, len(handObj)):
-            if self.isCardPlayable(tHandObj, handObj[cardIndex]) is True:
-                cards.append(cardIndex)
-        if len(cards) is len(handObj):
+        for card_index in range(0, len(hand_obj)):
+            if self.is_card_playable(tbl_hand_obj, hand_obj[card_index]) is True:
+                cards.append(card_index)
+        if len(cards) is len(hand_obj):
             return "Any, it's your lead!"
         elif len(cards) > 0:
             return cards
@@ -86,14 +89,14 @@ class SpadesRules(TrickGames):
             return False
 
 
-    def whoTakesTrick(self, handObj):
-        if self.highestTrumpInHand(handObj) is not False:
+    def who_takes_trick(self, hand_obj):
+        if self.highest_trump_in_hand(hand_obj) is not False:
             print("DEBUG Trump in hand.")
-            indexOfTrump = self.highestTrumpInHand(handObj)
-            print(indexOfTrump)
-            print(int(handObj[indexOfTrump[0]].owner))
-            return int(handObj[indexOfTrump[0]].owner)
+            index_of_trump = self.highest_trump_in_hand(hand_obj)
+            print(index_of_trump)
+            print(int(hand_obj[index_of_trump[0]].owner))
+            return int(hand_obj[index_of_trump[0]].owner)
         else:
             #print("DEBUG Finding highest value card")
-            sortedHand = sorted(handObj, key=lambda x: x[0], reverse=True)
-            return int(sortedHand[0].owner)
+            sorted_hand = sorted(hand_obj, key=lambda x: x[0], reverse=True)
+            return int(sorted_hand[0].owner)

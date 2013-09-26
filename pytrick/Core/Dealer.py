@@ -7,11 +7,11 @@ class Dealer(Player):
 
     def deal(self, deck, player, number):
         for x in range(number):
-            player.getCard(deck.nextCard())
+            player.get_card(deck.next_card())
 
-    def returnToDeck(self, deck, card, location='Bottom'):
+    def return_to_deck(self, deck, card, location='Bottom'):
         '''Accepts deck and card objects only'''
-        deck.returnToStack(card, location)
+        deck.return_to_stack(card, location)
 
     def shuffle(self, deck):
         deck.shuffle()

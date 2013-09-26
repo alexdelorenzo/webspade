@@ -8,15 +8,15 @@ class Hand(list):
         if len(card) is 0:
             return
         else:
-            self.toHand(card)
+            self.to_hand(card)
 
-    def toHand(self, card):
+    def to_hand(self, card):
         self.append(card)
 
-    def fromHand(self, index):
+    def from_hand(self, index):
         return self.pop(index)
 
-    def isInt(self, s):
+    def is_int(self, s):
         try:
             int(s)
             return True
@@ -24,7 +24,7 @@ class Hand(list):
             return False
 
     def find(self, card):
-        if self.isInt(self.index(card)) is False:
+        if self.is_int(self.index(card)) is False:
             print('ook')
             print("-----" + str(card) + " is not found!")
         else:

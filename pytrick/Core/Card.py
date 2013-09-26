@@ -2,14 +2,14 @@
 
 class Card(list):
     def __init__(self, value, suit):
-        self.blnOrigValue = True
+        self.is_orig_value = True
         self.value = value
         self.suit = suit
-        self.modifiedvalue = self.value
+        self.modified_value = self.value
         self.face = 'Down'
         self.owner = 0
 
-        self.append(self.trueValue())
+        self.append(self.true_value())
         self.append(str(suit))
 
 
@@ -19,8 +19,8 @@ class Card(list):
     def flip(self):
         self.face = 'Down' if (self.face == 'Up') else 'Up'
 
-    def trueValue(self):
-        if self.blnOrigValue is True:
+    def true_value(self):
+        if self.is_orig_value is True:
             if (2 <= self.value <= 10):
                 return int(self.value)
             elif self.value == 'Jack':
@@ -32,8 +32,8 @@ class Card(list):
             elif self.value == 'Ace':
                 return 1
         else:
-            return self.modifiedvalue
+            return self.modified_value
 
-    def newValue(self, value):
-        self.modifiedvalue = value
-        self.blnOrigValue = False
+    def new_value(self, value):
+        self.modified_value = value
+        self.is_orig_value = False

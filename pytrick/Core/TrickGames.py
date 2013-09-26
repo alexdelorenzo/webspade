@@ -6,29 +6,29 @@ class TrickGames(Game):
     def __init__(self):
         super(TrickGames, self).__init__()
         self.trump = ['']
-        print(self.trump[0])
-        self.blnTrump = False
+        self.bln_trump = False
 
-    def replaceTrump(self, trump, index=0):
+    def replace_trump(self, trump, index=0):
         self.trump[index] = trump
 
-    def addTrump(self, trump):
+    def add_trump(self, trump):
         self.trump.append(trump)
 
-    def delTrump(self, trump):
+    def del_trump(self, trump):
         self.trump.pop(self.trump.index(trump))
 
-    def isTrumpInHand(self, handObj):
-        inHand = False
-        for x in range(0, len(handObj)):
+    def is_trump_in_hand(self, hand_obj):
+        in_hand = False
+        for x in range(0, len(hand_obj)):
             for y in range(0, len(self.trump)):
-                if handObj[x].suit is self.trump[y]:
-                    inHand = True
-        return inHand
-    def canLeadWith(self, card):
-        if self.blnTrump is True:
+                if hand_obj[x].suit is self.trump[y]:
+                    in_hand = True
+        return in_hand
+
+    def can_lead_with(self, card):
+        if self.bln_trump is True:
             return
 
-    def trumpPlayed(self):
-        if self.blnTrump is True:
+    def trump_played(self):
+        if self.bln_trump is True:
             return

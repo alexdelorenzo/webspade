@@ -17,19 +17,25 @@ class Ledger(object):
 	##
 
 	@property
-	def hand(self): return self.game['hand']
-	@property
-	def round(self): return self.game['round']
-	@property
-	def trick_taker(self): return self.game['trick_taker']
-
+	def hand(self):
+		return self.game['hand']
 	@hand.setter
-	def hand(self, val): self.game['hand'] = val
-	@round.setter
-	def round(self, val): self.game['round'] = val
-	@trick_taker.setter
-	def trick_taker(self, val): self.game['trick_taker'] = val
+	def hand(self, val):
+		self.game['hand'] = val
 
+	@property
+	def round(self):
+		return self.game['round']
+	@round.setter
+	def round(self, val):
+		self.game['round'] = val
+
+	@property
+	def trick_taker(self):
+		return self.game['trick_taker']
+	@trick_taker.setter
+	def trick_taker(self, val):
+		self.game['trick_taker'] = val
 
 
 class Spades(Game):
@@ -69,7 +75,7 @@ class Spades(Game):
 		for who in range(len(self.players)):
 			bid = self.ledger.players[who]['bid']
 			high_bid = bid if bid > high_bid else high_bid
-			high_bidder = who if bid is high_bid else high_bidder
+			high_bidder = who if bid == high_bid else high_bidder
 
 		return high_bidder
 
@@ -87,24 +93,23 @@ class Spades(Game):
 
 		if override is True:
 			return override
+
 		elif first_turn_of_round is True:
-			#print "DEBUG first_turn_of_round is True"
-			#print "DEBUG self.highestBidder() is ", self.highestBidder()
 			return self._highest_bidder
+
 		elif turn_after_trick_taken is True:
-			#print "DEBUG turn_after_trick_taken is True"
 			return self.ledger.trick_taker
+
 		elif turn_after_card_played is True:
-			#print "DEBUG turn_after_card_played is True"
 			owner_of_last_card = self.table.groups[0][-1].owner
-			#print "DEBUG len(self.players) ", len(self.players)
 			if owner_of_last_card + 1 is len(self.players):
 				return 0
 			else:
 				return owner_of_last_card + 1
+
 		elif last_card_played is True:
-			#print "DEBUG last_card_played is True"
 			return self.ledger.trick_taker
+
 		else:
 			raise Exception("Invalid turn")
 
@@ -123,7 +128,7 @@ class Spades(Game):
 			print("Player ",  who,  "'s tricks: ", self.ledger.players[who]['wins'])
 
 	def _assign_card_owners(self):
-		for who, plyrObj in enumerate(self.players):
+		for who, plyr_obj in enumerate(self.players):
 			for card in range(0, len(self.players[who].hand)):
 				self.players[who].hand[card].owner = who
 
@@ -131,8 +136,8 @@ class Spades(Game):
 		self.ledger.players[player]['bid'] = bid
 
 	def _write_bids_to_ledger(self):
-		for who, plyrObj in enumerate(self.players):
-			self._append_bids(who, plyrObj.bids.pop())
+		for who, plyr_obj in enumerate(self.players):
+			self._append_bids(who, plyr_obj.bids.pop())
 
 	def _hand_counter(self):
 		self.ledger.game['hand'] += 1
@@ -140,20 +145,20 @@ class Spades(Game):
 	def _play_card(self, player):
 		self.table.add_card_to_group(
 			self.players[player].play(
-				self.players[player].selectCard()), 0)
+				self.players[player].select_card()), 0)
 
 	def _take_trick(self):
-		trickTaker = self.rules.whoTakesTrick(self.table.groups[0])
+		trickTaker = self.rules.who_takes_trick(self.table.groups[0])
 		self.ledger.trick_taker = trickTaker
 		print("Trick Taker: Player ", trickTaker)
 		self.ledger.players[trickTaker]['wins'] += 1
 		hand = self.table.remove_group(0)
 
 		for card in range(len(hand)):
-			self.deck.returnToStack(hand.pop())
+			self.deck.return_to_stack(hand.pop())
 
-	def initiate_players(self, intHumans):
-		self.players = [PlayerActions(x) for x in range(0, intHumans)]
+	def initiate_players(self, int_humans):
+		self.players = [PlayerActions(x) for x in range(0, int_humans)]
 
 	def initiate_dealer(self):
 		self.dealer = SpadesDealer()
@@ -211,14 +216,14 @@ class Spades(Game):
 		for player in self.players:
 			who = self.next_player()
 			print("Player's Turn: ", who)
-			self.players[who].lookAtHand()
+			self.players[who].look_at_hand()
 
-			best = self.rules.highestCardInHand(self.players[who].hand)
-			playable = self.rules.playableCardsInHand(self.table.groups[0], self.players[who].hand)
+			best = self.rules.highest_card_in_hand(self.players[who].hand)
+			playable = self.rules.playable_cards_in_hand(self.table.groups[0], self.players[who].hand)
 			print("\nBest card in hand: ", best)
 			print("Playable cards in hand: ", playable)
 
-			print("Cards on table: ", self.players[who].lookAtHand(self.table.groups[0]), "\n")
+			print("Cards on table: ", self.players[who].look_at_hand(self.table.groups[0]), "\n")
 
 			self._play_card(who)
 			self._hand_counter()
