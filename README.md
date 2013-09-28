@@ -13,7 +13,7 @@ about
 - views in jinja2
 
 this is another 'learn as i go' project. like most things, i'll look back in a month and lol at the choices i've made, and then fix them.
-that's my workflow. shame based motivation is key.
+my work flow is shame dependant for motivation.
 
 license
 =======
