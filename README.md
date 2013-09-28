@@ -1,7 +1,8 @@
 webspade
 ========
 
-web mvc for a simple spades game implemented in [pytrick](https://github.com/thismachinechills/pytrick)
+web mvc for a simple spades game implemented in [pytrick](https://github.com/thismachinechills/pytrick) (click).
+this is babby's first webbased anything built on top of babbys first game, be gentle.
 
 
 about
